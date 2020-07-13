@@ -34,17 +34,17 @@ $IPTABLES -A INPUT -p tcp -m tcp --dport {{port}} -j ACCEPT
 $IPTABLES -A INPUT -p udp -m udp --dport {{port}} -j ACCEPT
 {% endfor %}
 
+# Raw rules
+{% for rule in iptables_raw_rules %}
+$IPTABLES {{rule}}
+{% endfor %}
+
 # Accept ICMP packets (it allows ping for example)
 $IPTABLES -A INPUT -p icmp -j ACCEPT
 
 # Allow NTP traffic for time synchronization.
 $IPTABLES -A OUTPUT -p udp --dport 123 -j ACCEPT
 $IPTABLES -A INPUT -p udp --sport 123 -j ACCEPT
-
-# Raw rules
-{% for rule in iptables_raw_rules %}
-$IPTABLES {{rule}}
-{% endfor %}
 
 # Allow established connections:
 $IPTABLES -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
